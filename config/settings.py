@@ -52,8 +52,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> a2fea69c6da2abeacdb50efd624499589ef1fb3f
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -120,10 +123,13 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+<<<<<<< HEAD
 STATICFILES_DIRS = [
     BASE_DIR/ 'static',
 ]
 
+=======
+>>>>>>> a2fea69c6da2abeacdb50efd624499589ef1fb3f
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
