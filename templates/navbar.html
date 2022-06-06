@@ -20,6 +20,11 @@
                     <a class="nav-link" href="{% url 'common:login' %}">로그인</a>
                 </li>
                 {% endif %}
+                {% if not user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'common:signup' %}">회원가입</a>
+                </li>
+                {% endif %}
             </ul>
         </div>
     </div>
