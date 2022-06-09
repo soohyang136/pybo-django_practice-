@@ -1,47 +1,11 @@
-from django.shortcuts import render
-
-# Create your views here.
-
-from django.http import HttpResponse
-
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Question
-from django.utils import timezone
-from .forms import QuestionForm, AnswerForm
-from django.core.paginator import Paginator
-from django.http import HttpResponseNotAllowed
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render, get_object_or_404
+from django.utils import timezone
 
-def index(request):
-    page = request.GET.get('page', '1')
-    question_list = Question.objects.order_by('-create_date')
-    paginator = Paginator(question_list, 10)
-    page_obj = paginator.get_page(page)
-    context = {'question_list': page_obj}
-    return render(request, 'pybo/question_list.html', context)
+from pybo.forms import QuestionForm
+from pybo.models import Question
 
-def detail(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    context = {'question' : question}
-    return render(request, 'pybo/question_detail.html', context)
-
-@login_required(login_url='common:login')
-def answer_create(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    if request.method == "POST":
-        form = AnswerForm(request.POST)
-        if form.is_valid():
-            answer = form.save(commit=False)
-            answer.author = request.user
-            answer.create_date = timezone.now()
-            answer.question = question
-            answer.save()
-            return redirect('pybo:detail', question_id=question.id)
-    else:
-        form = AnswerForm()
-    context = {'question': question, 'form': form}
-    return render(request, 'pybo/question_detail.html', context)
 
 @login_required(login_url='common:login')
 def question_create(request):
@@ -83,3 +47,12 @@ def question_delete(request, question_id):
         return redirect('pybo:detail', question_id=question.id)
     question.delete()
     return redirect('pybo:index')
+
+@login_required(login_url='common:login')
+def question_vote(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    if request.user == question.author:
+        messages.error(request, '본인의 글은 추천할 수 없습니다.')
+    else:
+        question.voter.add(request.user)
+    return redirect('pybo:detail', question_id=question.id)
